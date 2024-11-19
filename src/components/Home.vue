@@ -75,10 +75,8 @@
 <script lang="ts" setup>
 import { computed, reactive } from "vue";
 import { useProductStore } from "../stores/ProductStore";
-import { useRouter } from "vue-router";
 
 const productStore = useProductStore();
-const router = useRouter();
 
 productStore.init();
 

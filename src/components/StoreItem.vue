@@ -1,34 +1,32 @@
 <template>
-  <v-container>
+  <v-container v-if="product">
     <v-card class="mx-auto my-5" max-width="600" outlined>
-      <!-- Product Image -->
-      <v-img :src="product.data.image" height="300px"></v-img>
       <!-- Product Name -->
       <v-card-title class="text-h5 font-weight-bold">
-        {{ product.data.name }}
+        {{ product!.data.name }}
       </v-card-title>
       <!-- Product Category with Colored Icon -->
       <v-card-subtitle class="grey--text text--darken-1 d-flex align-center">
         <v-icon
-          :color="getCategoryColor(product.data.category)"
+          :color="getCategoryColor(product!.data.category)"
           small
           class="mr-1"
         >
-          {{ getCategoryIcon(product.data.category) }}
+          {{ getCategoryIcon(product!.data.category) }}
         </v-icon>
-        {{ product.data.category }}
+        {{ product!.data.category }}
       </v-card-subtitle>
       <!-- Product Description and Details -->
       <v-card-text>
         <!-- Description -->
-        <p class="my-3 text-body-1">{{ product.data.description }}</p>
+        <p class="my-3 text-body-1">{{ product!.data.description }}</p>
         <!-- Price -->
         <div class="my-2 d-flex align-center">
           <v-icon color="orange darken-1" small class="mr-1">
             mdi-currency-usd
           </v-icon>
           <strong>Price:</strong>
-          ${{ product.data.price.toFixed(2) }}
+          ${{ product!.data.price.toFixed(2) }}
         </div>
         <!-- Rating -->
         <div class="my-2 d-flex align-center">
@@ -36,7 +34,7 @@
             mdi-star
           </v-icon>
           <strong>Rating:</strong>
-          {{ product.data.rating }} / 5
+          {{ product!.data.rating }} / 5
         </div>
         <!-- Stock -->
         <div class="my-2 d-flex align-center">
@@ -44,7 +42,7 @@
             mdi-warehouse
           </v-icon>
           <strong>Stock:</strong>
-          {{ product.data.stock }}
+          {{ product!.data.stock }}
         </div>
       </v-card-text>
       <!-- Add to Cart Button -->
@@ -62,15 +60,17 @@
 import { ref, onMounted } from "vue";
 import { useProductStore } from "../stores/ProductStore";
 import { useRoute } from "vue-router";
+import type { ProductDoc } from "../types/product";
 
-const product = ref(null);
+const product = ref<ProductDoc | null>(null);
 
 const productStore = useProductStore();
 const route = useRoute();
 
 onMounted(() => {
   const productId = route.params.id as string;
-  product.value = productStore.products.find((item) => item.id === productId);
+  productStore.init(); // Ensure the store is initialized
+  product.value = productStore.products.find((item) => item.id === productId) || null;
 });
 
 const addToCart = () => {
